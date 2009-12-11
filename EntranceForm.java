@@ -73,8 +73,9 @@ public class EntranceForm extends JPanel {
     // adicionando o evento de processar os campos quando houver clique do botao
     btn.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        if(txtNome.getText().equals("")) {
-          JOptionPane.showMessageDialog(getRootPane(), "Voce precisa informar o seu nome antes.");
+        if(txtNome.getText().trim().equals("")) {
+          JOptionPane.showMessageDialog(getRootPane(), "Voce precisa informar um nome valido antes.");
+          txtNome.requestFocus();
         }
       }
     });
