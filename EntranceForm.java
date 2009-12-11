@@ -71,13 +71,13 @@ public class EntranceForm extends JPanel {
     centralContainer.add(createPadding(10));
 
     // adicionando o evento de processar os campos quando houver clique do botao
-    /*
     btn.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
-        
+        if(txtNome.getText().equals("")) {
+          JOptionPane.showMessageDialog(getRootPane(), "Voce precisa informar o seu nome antes.");
+        }
       }
     });
-    */
   }
 
   private Container setDefaultLayoutTo(Container obj) {
