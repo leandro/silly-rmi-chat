@@ -12,12 +12,15 @@ public class EntranceForm extends JPanel {
   // JPanels abaixo usados para organizar a informação
   private JPanel centralContainer, inputContainer1, inputContainer2, submitContainer;
   private JTextField txtNome, txtSala;
+  private JFrame frame;
 
-  public EntranceForm() {
+  public EntranceForm(JFrame mainFrame) {
     JTextField txt;
     JPanel detailPanel;
     JLabel label;
     JButton btn;
+
+    frame = mainFrame;
 
     setDefaultLayoutTo(this); // o algoritmo a ser utilizado para dispor os elementos internos (BoxLayout)
     setBorder(new EmptyBorder(new Insets(20,20,20,20))); // definindo as margens internas do form
@@ -76,6 +79,9 @@ public class EntranceForm extends JPanel {
         if(txtNome.getText().trim().equals("")) {
           JOptionPane.showMessageDialog(getRootPane(), "Voce precisa informar um nome valido antes.");
           txtNome.requestFocus();
+        } else {
+          frame.setContentPane(new ChatPanel(frame));
+          frame.pack();
         }
       }
     });
