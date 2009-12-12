@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.text.*;
 import javax.accessibility.*;
 
 import java.awt.*;
@@ -8,12 +9,14 @@ import java.util.*;
 
 public class ChatPanel extends javax.swing.JPanel {
 
-  private JPanel bodyPanel, bottomPanel, msgsPanel;
+  private JPanel bodyPanel, bottomPanel;
   private ChatInfo chatInfo;
   private JFrame frame;
   private JTextField txtMessage;
   private ArrayList<String> userNames;
   private JScrollPane scroll;
+  private JTextPane msgsField;
+  private StyledDocument msgsFieldDoc;
 
   public ChatPanel(ChatInfo info) {
     chatInfo  = info;
@@ -40,14 +43,16 @@ public class ChatPanel extends javax.swing.JPanel {
     bodyPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
     bodyPanel.setPreferredSize(new Dimension(800, 460));
     // INI.container de mensagens
-    msgsPanel = new JPanel();
-    msgsPanel.setLayout(new BoxLayout(msgsPanel, BoxLayout.Y_AXIS));
-    msgsPanel.setPreferredSize(new Dimension(600,20));
-    scroll = new JScrollPane(msgsPanel);
+    msgsField = new JTextPane();
+    msgsField.setEditable(false);
+    msgsFieldDoc = msgsField.getStyledDocument();
+    addStylesToDocument(msgsFieldDoc);
+    scroll = new JScrollPane(msgsField);
     scroll.setPreferredSize(new Dimension(600, 460));
     scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     bodyPanel.add(scroll);
-    msgsPanel.add(buildMessageFromFormattedString(String.format("<html> >>> O usuario <b>%s</b> entrou na sala.</html>", chatInfo.getUsrNome())));
+    userEnteredRoomMessage(chatInfo.getUsrNome());
+    userLeftRoomMessage(chatInfo.getUsrNome());
     // FIM.container de mensagens
     // INI.lista de usuarios
     usrList = new JList(userNames.toArray());
@@ -85,21 +90,22 @@ public class ChatPanel extends javax.swing.JPanel {
     add(bottomPanel);
   }
 
-  private JPanel buildMessageFromFormattedString(String msg) {
-    JPanel itemPanel;
-    JLabel lbl;
-
-    itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    lbl = new JLabel(msg);
-    lbl.setPreferredSize(new Dimension(600, 20));
-    lbl.setVerticalAlignment(JLabel.TOP);
-    itemPanel.add(lbl);
-    itemPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(0x444444)));
-    return itemPanel;
+  private void userEnteredRoomMessage(String username) {
+    appendMessage(new String[] {" >>> O usuario ",username," entrou na sala.\n"}, new String[] {"entrou_style", "entrou_style_bold", "entrou_style"});
   }
 
-  private JPanel buildMessageItem(String user, String msg) {
-    return buildMessageFromFormattedString(String.format("<html><b>%s</b>: %s</html>",user, msg));
+  private void userLeftRoomMessage(String username) {
+    appendMessage(new String[] {" <<< O usuario ",username," saiu na sala.\n"}, new String[] {"saiu_style", "saiu_style_bold", "saiu_style"});
+  }
+
+  private void appendMessage(String[] msgs, String[] styles) {
+    try {
+      for(int i = 0; i < msgs.length; i++) {
+        msgsFieldDoc.insertString(msgsFieldDoc.getLength(), msgs[i], msgsFieldDoc.getStyle(styles[i]));
+      }
+    } catch(BadLocationException ble) {
+      System.out.println("Erro adicionar texto inicial");
+    }
   }
 
   private boolean addMessage() {
@@ -109,8 +115,8 @@ public class ChatPanel extends javax.swing.JPanel {
       txtMessage.requestFocus();
       return false;
     }
-    msgsPanel.add(buildMessageItem(chatInfo.getUsrNome(), message));
-    scroll.setViewportView(msgsPanel);
+    appendMessage(new String[] {chatInfo.getUsrNome(), String.format(":%s\n", message)}, new String[] {"bold","regular"});
+    scroll.setViewportView(msgsField);
     txtMessage.setText("");
     txtMessage.requestFocus();
     return true;
@@ -118,6 +124,38 @@ public class ChatPanel extends javax.swing.JPanel {
 
   private boolean sendMessage() {
     return true;
+  }
+
+  protected void addStylesToDocument(StyledDocument doc) {
+    //Initialize some styles.
+    Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+
+    Style regular = doc.addStyle("regular", def);
+    StyleConstants.setFontFamily(def, "SansSerif");
+
+    Style s = doc.addStyle("italic", regular);
+    StyleConstants.setItalic(s, true);
+
+    s = doc.addStyle("bold", regular);
+    StyleConstants.setBold(s, true);
+
+    s = doc.addStyle("small", regular);
+    StyleConstants.setFontSize(s, 10);
+
+    s = doc.addStyle("large", regular);
+    StyleConstants.setFontSize(s, 16);
+
+    s = doc.addStyle("entrou_style", regular);
+    StyleConstants.setForeground(s, new Color(0x117711));
+
+    s = doc.addStyle("entrou_style_bold", s);
+    StyleConstants.setBold(s, true);
+
+    s = doc.addStyle("saiu_style", regular);
+    StyleConstants.setForeground(s, new Color(0x771111));
+
+    s = doc.addStyle("saiu_style_bold", s);
+    StyleConstants.setBold(s, true);
   }
 
 }
