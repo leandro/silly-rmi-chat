@@ -42,10 +42,12 @@ public class ChatPanel extends javax.swing.JPanel {
     // INI.container de mensagens
     msgsPanel = new JPanel();
     msgsPanel.setLayout(new BoxLayout(msgsPanel, BoxLayout.Y_AXIS));
+    msgsPanel.setPreferredSize(new Dimension(600,20));
     scroll = new JScrollPane(msgsPanel);
     scroll.setPreferredSize(new Dimension(600, 460));
     scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     bodyPanel.add(scroll);
+    msgsPanel.add(buildMessageFromFormattedString(String.format("<html> >>> O usuario <b>%s</b> entrou na sala.</html>", chatInfo.getUsrNome())));
     // FIM.container de mensagens
     // INI.lista de usuarios
     usrList = new JList(userNames.toArray());
@@ -83,24 +85,21 @@ public class ChatPanel extends javax.swing.JPanel {
     add(bottomPanel);
   }
 
-  private JPanel buildMessageItem(String user, String msg) {
+  private JPanel buildMessageFromFormattedString(String msg) {
     JPanel itemPanel;
     JLabel lbl;
 
     itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    itemPanel.setMinimumSize(new Dimension(660, 20));
-    lbl = new JLabel(user);
-    lbl.setPreferredSize(new Dimension(150, 20));
-    lbl.setHorizontalAlignment(JLabel.RIGHT);
-    lbl.setVerticalAlignment(JLabel.TOP);
-    itemPanel.add(lbl);
-    itemPanel.add(Box.createRigidArea(new Dimension(10, 0)));
     lbl = new JLabel(msg);
+    lbl.setPreferredSize(new Dimension(600, 20));
     lbl.setVerticalAlignment(JLabel.TOP);
-    lbl.setPreferredSize(new Dimension(440, 20));
     itemPanel.add(lbl);
     itemPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(0x444444)));
     return itemPanel;
+  }
+
+  private JPanel buildMessageItem(String user, String msg) {
+    return buildMessageFromFormattedString(String.format("<html><b>%s</b>: %s</html>",user, msg));
   }
 
   private boolean addMessage() {
