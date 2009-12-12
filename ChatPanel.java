@@ -4,24 +4,20 @@ import javax.accessibility.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 public class ChatPanel extends javax.swing.JPanel {
 
   private JPanel bodyPanel, bottomPanel;
   private ChatInfo chatInfo;
   private JFrame frame;
-  private String[] teste = {
-    "bacana", "coisas", "azul", "verde", "amarelo",
-    "puta merda", "irra", "caralho", "que legal", "e assim por diante",
-    "bacana", "coisas", "azul", "verde", "amarelo",
-    "puta merda", "irra", "caralho", "que legal", "e assim por diante",
-    "bacana", "coisas", "azul", "verde", "amarelo",
-    "puta merda", "irra", "caralho", "que legal", "e assim por diante"
-  };
+  private ArrayList<String> userNames;
 
   public ChatPanel(ChatInfo info) {
-    chatInfo = info;
-    frame = info.getFrame();
+    chatInfo  = info;
+    frame     = info.getFrame();
+    userNames = new ArrayList<String>();
+    userNames.add(info.getUsrNome());
     frame.setTitle(String.format("Usuario '%s' conectado", info.getUsrNome()));
 
     buildMainStructure();
@@ -49,7 +45,7 @@ public class ChatPanel extends javax.swing.JPanel {
     bodyPanel.add(lbl);
     // FIM.container de mensagens
     // INI.lista de usuarios
-    usrList = new JList(teste);
+    usrList = new JList(userNames.toArray());
     usrList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     scrollPane = new JScrollPane(usrList);
     scrollPane.setPreferredSize(new Dimension(200, 460));
