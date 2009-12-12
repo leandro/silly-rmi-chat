@@ -2,11 +2,17 @@ import java.awt.Dimension;
 
 public class MainWindow extends javax.swing.JFrame {
 
+  private ChatInfo chatInfo;
+
   public MainWindow() {
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     setResizable(false);
     setTitle("Bate-papo");
-    add(new EntranceForm(this));
+
+    chatInfo = new ChatInfo();
+    chatInfo.setFrame(this);
+
+    add(new EntranceForm(chatInfo));
     pack();
 
     setVisible(true);

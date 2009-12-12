@@ -8,11 +8,13 @@ import java.awt.event.*;
 public class ChatPanel extends javax.swing.JPanel {
 
   private JPanel bodyPanel, bottomPanel;
+  private ChatInfo chatInfo;
   private JFrame frame;
 
-  public ChatPanel(JFrame mainFrame) {
-    frame = mainFrame;
-    frame.setTitle(String.format("Usuario '%s' conectado", ))
+  public ChatPanel(ChatInfo info) {
+    chatInfo = info;
+    frame = info.getFrame();
+    frame.setTitle(String.format("Usuario '%s' conectado", info.getUsrNome()));
 
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     setOpaque(true);

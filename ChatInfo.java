@@ -1,13 +1,15 @@
+import javax.swing.JFrame;
+
 public class ChatInfo {
 
-  private javax.swing.JFrame frame;
+  private JFrame frame;
   private String usrNome, salaNome;
 
   public String getUsrNome() {
     return usrNome;
   }
 
-  public ClassInfo setUsrNome(String nome) {
+  public ChatInfo setUsrNome(String nome) {
     usrNome = nome;
     return this;
   }
@@ -16,8 +18,17 @@ public class ChatInfo {
     return salaNome;
   }
 
-  public ClassInfo setSalaNome(String sala) {
+  public ChatInfo setSalaNome(String sala) {
     salaNome = sala;
+    return this;
+  }
+
+  public JFrame getFrame() {
+    return frame;
+  }
+
+  public ChatInfo setFrame(JFrame frame) {
+    this.frame = frame;
     return this;
   }
 
