@@ -10,6 +10,14 @@ public class ChatPanel extends javax.swing.JPanel {
   private JPanel bodyPanel, bottomPanel;
   private ChatInfo chatInfo;
   private JFrame frame;
+  private String[] teste = {
+    "bacana", "coisas", "azul", "verde", "amarelo",
+    "puta merda", "irra", "caralho", "que legal", "e assim por diante",
+    "bacana", "coisas", "azul", "verde", "amarelo",
+    "puta merda", "irra", "caralho", "que legal", "e assim por diante",
+    "bacana", "coisas", "azul", "verde", "amarelo",
+    "puta merda", "irra", "caralho", "que legal", "e assim por diante"
+  };
 
   public ChatPanel(ChatInfo info) {
     chatInfo = info;
@@ -23,20 +31,32 @@ public class ChatPanel extends javax.swing.JPanel {
     JLabel lbl;
     JTextField txt;
     JButton btn;
+    JScrollPane scrollPane;
+    JList usrList;
 
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     setOpaque(true);
     setPreferredSize(new Dimension(800,500));
 
+    // INI.o corpo do chat
     bodyPanel = new JPanel();
     bodyPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
     bodyPanel.setPreferredSize(new Dimension(800, 460));
+    // INI.container de mensagens
     lbl = new JLabel();
     lbl.setPreferredSize(new Dimension(600, 460));
     lbl.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(0x666666)));
     bodyPanel.add(lbl);
-    //bodyPanel.setBackground(new Color(0x113377));
+    // FIM.container de mensagens
+    // INI.lista de usuarios
+    usrList = new JList(teste);
+    usrList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    scrollPane = new JScrollPane(usrList);
+    scrollPane.setPreferredSize(new Dimension(200, 460));
+    bodyPanel.add(scrollPane);
+    // FIM.lista de usuarios
     add(bodyPanel);
+    // FIM.o corpo do chat
 
     bottomPanel = new JPanel();
     bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
