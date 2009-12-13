@@ -19,11 +19,11 @@ public class ChatClientPing extends Thread {
     while(true) {
       try {
         try {
-          packet = GUIClient.chatClientHandle.pingForData(GUIClient.chatInfo.getUsrNome(), GUIClient.lastReadMessage);
+          packet = GUIClient.chatClientHandle.pingForData(GUIClient.chatInfo.getUsrNome(), GUIClient.chatInfo.getLastReadMessage());
           ArrayList<ChatMessage> messages = packet.getNewMessages();
 
           GUIClient.usrList.setListData(packet.getUsersList().toArray());
-          GUIClient.lastReadMessage += messages.size();
+          GUIClient.chatInfo.setLastReadMessage(GUIClient.chatInfo.getLastReadMessage() + messages.size());
           for(int i = 0; i < messages.size(); i++) {
             ChatMessage message = messages.get(i);
 

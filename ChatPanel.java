@@ -19,7 +19,6 @@ public class ChatPanel extends javax.swing.JPanel {
   public JTextPane msgsField;
   public StyledDocument msgsFieldDoc;
   public ChatService chatClientHandle;
-  public int lastReadMessage; // array position
   public JList usrList;
 
   public ChatPanel(ChatInfo info) {
@@ -29,7 +28,7 @@ public class ChatPanel extends javax.swing.JPanel {
     userNames.add(info.getUsrNome());
     frame.setTitle(String.format("Usuario '%s' conectado", info.getUsrNome()));
 
-    lastReadMessage = -1;
+    chatInfo.setLastReadMessage(-1);
 
     try {
       chatClientHandle = (ChatService) Naming.lookup("rmi://localhost/ChatService");

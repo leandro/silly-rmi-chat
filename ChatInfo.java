@@ -4,6 +4,7 @@ public class ChatInfo {
 
   private JFrame frame;
   private String usrNome, salaNome;
+  private int lastReadMessage; // array position
 
   public String getUsrNome() {
     return usrNome;
@@ -29,6 +30,15 @@ public class ChatInfo {
 
   public ChatInfo setFrame(JFrame frame) {
     this.frame = frame;
+    return this;
+  }
+
+  public int getLastReadMessage() {
+    return lastReadMessage;
+  }
+
+  public ChatInfo setLastReadMessage(int lastReadMessage) {
+    this.lastReadMessage = lastReadMessage;
     return this;
   }
 
