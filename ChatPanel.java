@@ -46,13 +46,18 @@ public class ChatPanel extends javax.swing.JPanel {
     msgsField = new JTextPane();
     msgsField.setEditable(false);
     msgsFieldDoc = msgsField.getStyledDocument();
+    msgsField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
     addStylesToDocument(msgsFieldDoc);
     scroll = new JScrollPane(msgsField);
     scroll.setPreferredSize(new Dimension(600, 460));
     scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    scroll.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener(){
+      public void adjustmentValueChanged(AdjustmentEvent e){
+        msgsField.select(msgsField.getHeight()+1000,0);
+      }
+    });
     bodyPanel.add(scroll);
     userEnteredRoomMessage(chatInfo.getUsrNome());
-    userLeftRoomMessage(chatInfo.getUsrNome());
     // FIM.container de mensagens
     // INI.lista de usuarios
     usrList = new JList(userNames.toArray());
@@ -91,17 +96,19 @@ public class ChatPanel extends javax.swing.JPanel {
   }
 
   private void userEnteredRoomMessage(String username) {
-    appendMessage(new String[] {" >>> O usuario ",username," entrou na sala.\n"}, new String[] {"entrou_style", "entrou_style_bold", "entrou_style"});
+    appendMessage(new String[] {">>> O usuario ",username," entrou na sala.\n"}, new String[] {"entrou_style", "entrou_style_bold", "entrou_style"});
   }
 
   private void userLeftRoomMessage(String username) {
-    appendMessage(new String[] {" <<< O usuario ",username," saiu na sala.\n"}, new String[] {"saiu_style", "saiu_style_bold", "saiu_style"});
+    appendMessage(new String[] {"<<< O usuario ",username," saiu da sala.\n"}, new String[] {"saiu_style", "saiu_style_bold", "saiu_style"});
   }
 
   private void appendMessage(String[] msgs, String[] styles) {
+    int txtSize = 0;
     try {
       for(int i = 0; i < msgs.length; i++) {
         msgsFieldDoc.insertString(msgsFieldDoc.getLength(), msgs[i], msgsFieldDoc.getStyle(styles[i]));
+        txtSize += msgs[i].length();
       }
     } catch(BadLocationException ble) {
       System.out.println("Erro adicionar texto inicial");
@@ -115,7 +122,7 @@ public class ChatPanel extends javax.swing.JPanel {
       txtMessage.requestFocus();
       return false;
     }
-    appendMessage(new String[] {chatInfo.getUsrNome(), String.format(":%s\n", message)}, new String[] {"bold","regular"});
+    appendMessage(new String[] {chatInfo.getUsrNome(), String.format(": %s\n", message)}, new String[] {"bold","regular"});
     scroll.setViewportView(msgsField);
     txtMessage.setText("");
     txtMessage.requestFocus();
