@@ -55,7 +55,7 @@ public class ChatServiceServer extends UnicastRemoteObject implements ChatServic
 
   public static void main(String[] args) throws Exception {
     ChatServiceServer svr = new ChatServiceServer();
-    Naming.rebind("ChatService", svr);
+    Naming.rebind("rmi://localhost/ChatService", svr);
     System.out.println("Servico de chat rodando...");
   }
 

@@ -32,7 +32,7 @@ public class ChatPanel extends javax.swing.JPanel {
     lastReadMessage = -1;
 
     try {
-      chatClientHandle = (ChatService) Naming.lookup("ChatService");
+      chatClientHandle = (ChatService) Naming.lookup("rmi://localhost/ChatService");
     } catch(Exception e) { e.printStackTrace(); }
 
     buildMainStructure();
