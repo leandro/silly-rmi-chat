@@ -22,7 +22,7 @@ public class ChatServiceServer extends UnicastRemoteObject implements ChatServic
     }
 
     ArrayList<ChatMessage> newMessages = new ArrayList<ChatMessage>(0);
-    newMessages.ensureCapacity(newMessages.size() - (lastReadMessage + 1));
+    newMessages.ensureCapacity(messages.size() - (lastReadMessage + 1));
     for(int i = lastReadMessage + 1; i < messages.size(); i++) {
       newMessages.add(messages.get(i));
     }

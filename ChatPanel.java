@@ -10,15 +10,17 @@ import java.rmi.*;
 
 public class ChatPanel extends javax.swing.JPanel {
 
-  private JPanel bodyPanel, bottomPanel;
-  private ChatInfo chatInfo;
-  private JFrame frame;
-  private JTextField txtMessage;
-  private ArrayList<String> userNames;
-  private JScrollPane scroll;
-  private JTextPane msgsField;
-  private StyledDocument msgsFieldDoc;
-  private ChatService chatClientHandle;
+  public JPanel bodyPanel, bottomPanel;
+  public ChatInfo chatInfo;
+  public JFrame frame;
+  public JTextField txtMessage;
+  public ArrayList<String> userNames;
+  public JScrollPane scroll;
+  public JTextPane msgsField;
+  public StyledDocument msgsFieldDoc;
+  public ChatService chatClientHandle;
+  public int lastReadMessage; // array position
+  public JList usrList;
 
   public ChatPanel(ChatInfo info) {
     chatInfo  = info;
@@ -27,18 +29,20 @@ public class ChatPanel extends javax.swing.JPanel {
     userNames.add(info.getUsrNome());
     frame.setTitle(String.format("Usuario '%s' conectado", info.getUsrNome()));
 
+    lastReadMessage = -1;
+
     try {
       chatClientHandle = (ChatService) Naming.lookup("ChatService");
     } catch(Exception e) { e.printStackTrace(); }
 
     buildMainStructure();
+    ChatClientPing.startPing(this);
   }
 
   public void buildMainStructure() {
     JTextField txt;
     JButton btn;
     JScrollPane scrollPane;
-    JList usrList;
 
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     setOpaque(true);
@@ -91,7 +95,7 @@ public class ChatPanel extends javax.swing.JPanel {
     bottomPanel.add(btn);
     btn.addMouseListener(new MouseAdapter() {
       public void mouseReleased(MouseEvent e) {
-        addMessage();
+        processMessage();
       }
     });
 
@@ -108,11 +112,11 @@ public class ChatPanel extends javax.swing.JPanel {
     add(bottomPanel);
   }
 
-  private void userEnteredRoomMessage(String username) {
+  public void addUserEnteredRoomMessage(String username) {
     appendMessage(new String[] {">>> O usuario ",username," entrou na sala.\n"}, new String[] {"entrou_style", "entrou_style_bold", "entrou_style"});
   }
 
-  private void userLeftRoomMessage(String username) {
+  public void addUserLeftRoomMessage(String username) {
     appendMessage(new String[] {"<<< O usuario ",username," saiu da sala.\n"}, new String[] {"saiu_style", "saiu_style_bold", "saiu_style"});
   }
 
@@ -128,22 +132,31 @@ public class ChatPanel extends javax.swing.JPanel {
     }
   }
 
-  private boolean addMessage() {
+  public boolean addMessage(String user, String message) {
+    appendMessage(new String[] {user, String.format(": %s\n", message)}, new String[] {"bold","regular"});
+    //scroll.setViewportView(msgsField);
+    return true;
+  }
+
+  private boolean processMessage() {
     String message = txtMessage.getText().trim();
     if(message.length() == 0) {
       JOptionPane.showMessageDialog(frame, "Voce nao pode enviar uma mensagem vazia.");
       txtMessage.requestFocus();
       return false;
     }
-    appendMessage(new String[] {chatInfo.getUsrNome(), String.format(": %s\n", message)}, new String[] {"bold","regular"});
-    scroll.setViewportView(msgsField);
+    if(!sendMessage(message)) return false;
     txtMessage.setText("");
     txtMessage.requestFocus();
     return true;
   }
 
-  private boolean sendMessage() {
-    return true;
+  private boolean sendMessage(String msg) {
+    boolean b = false;
+    try {
+      b = chatClientHandle.sendMessage(new ChatMessage(chatInfo.getUsrNome(), msg, ChatMessage.USER_MESSAGE));
+    } catch(Exception e) { e.printStackTrace(); }
+    return b;
   }
 
   protected void addStylesToDocument(StyledDocument doc) {

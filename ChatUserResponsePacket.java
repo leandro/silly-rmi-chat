@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 
-public class ChatUserResponsePacket {
+public class ChatUserResponsePacket implements Serializable {
 
   private ArrayList<String> usersList;
   private ArrayList<ChatMessage> newMessages;
