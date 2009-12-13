@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.ArrayList;
 
 public class ChatUserResponsePacket {
@@ -16,6 +17,22 @@ public class ChatUserResponsePacket {
 
   public ArrayList<ChatMessage> getNewMessages() {
     return newMessages;
+  }
+
+  public void setNewMessages(ArrayList<ChatMessage> chatMessages) {
+    newMessages = chatMessages;
+  }
+
+  public void setUsersList(ArrayList<String> users) {
+    usersList = users;
+  }
+
+  private void readObject(ObjectInputStream input) throws ClassNotFoundException, IOException {
+    input.defaultReadObject();
+  }
+
+  private void writeObject(ObjectOutputStream ouput) throws IOException {
+    ouput.defaultWriteObject();
   }
 
 }

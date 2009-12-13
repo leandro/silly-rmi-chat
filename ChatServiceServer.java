@@ -13,7 +13,9 @@ public class ChatServiceServer extends UnicastRemoteObject implements ChatServic
     users     = new ArrayList<String>(0);
   }
 
-  public ChatUserResponsePacket pingForData(int lastReadMessage) throws RemoteException {
+  public ChatUserResponsePacket pingForData(String user, int lastReadMessage) throws RemoteException {
+
+    System.out.println(String.format("User '%s' request chat data.", user));
 
     if(lastReadMessage < 0) {
       return new ChatUserResponsePacket(users, messages);
@@ -31,18 +33,20 @@ public class ChatServiceServer extends UnicastRemoteObject implements ChatServic
     messages.ensureCapacity(messages.size() + 1);
     messages.add(packet);
 
-    if(packet.getMessageType() == ChatMessage.USER_LEAVE) {
-      int pos = users.indexOf(packet.getUserName());
-      if(pos > -1) {
-        users.remove(pos);
-      }
-    }
-
-    if(packet.getMessageType() == ChatMessage.USER_ENTER) {
+    if(packet.getMessageType() == ChatMessage.USER_MESSAGE) {
+        System.out.println(String.format("User '%s' sent message: '%s'.", packet.getUserName(), packet.getMessageText()));
+    } else if(packet.getMessageType() == ChatMessage.USER_ENTER) {
       int pos = users.indexOf(packet.getUserName());
       if(pos == -1) {
         users.ensureCapacity(users.size() + 1);
         users.add(packet.getUserName());
+        System.out.println(String.format("User '%s' entered the room.", packet.getUserName()));
+      }
+    } else {
+      int pos = users.indexOf(packet.getUserName());
+      if(pos > -1) {
+        users.remove(pos);
+        System.out.println(String.format("User '%s' left the room.", packet.getUserName()));
       }
     }
 
@@ -51,7 +55,7 @@ public class ChatServiceServer extends UnicastRemoteObject implements ChatServic
 
   public static void main(String[] args) throws Exception {
     ChatServiceServer svr = new ChatServiceServer();
-    Naming.bind("ChatService", svr);
+    Naming.rebind("ChatService", svr);
     System.out.println("Servico de chat rodando...");
   }
 

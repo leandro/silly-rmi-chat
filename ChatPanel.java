@@ -6,6 +6,7 @@ import javax.accessibility.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.rmi.*;
 
 public class ChatPanel extends javax.swing.JPanel {
 
@@ -17,6 +18,7 @@ public class ChatPanel extends javax.swing.JPanel {
   private JScrollPane scroll;
   private JTextPane msgsField;
   private StyledDocument msgsFieldDoc;
+  private ChatService chatClientHandle;
 
   public ChatPanel(ChatInfo info) {
     chatInfo  = info;
@@ -24,6 +26,10 @@ public class ChatPanel extends javax.swing.JPanel {
     userNames = new ArrayList<String>();
     userNames.add(info.getUsrNome());
     frame.setTitle(String.format("Usuario '%s' conectado", info.getUsrNome()));
+
+    try {
+      chatClientHandle = (ChatService) Naming.lookup("ChatService");
+    } catch(Exception e) { e.printStackTrace(); }
 
     buildMainStructure();
   }
@@ -57,7 +63,11 @@ public class ChatPanel extends javax.swing.JPanel {
       }
     });
     bodyPanel.add(scroll);
-    userEnteredRoomMessage(chatInfo.getUsrNome());
+
+    // enviando mesnagem rmi avisando que o usuario conectou
+    try {
+      chatClientHandle.sendMessage(new ChatMessage(chatInfo.getUsrNome(), new String(""), ChatMessage.USER_ENTER));
+    } catch(Exception e) { e.printStackTrace(); }
     // FIM.container de mensagens
     // INI.lista de usuarios
     usrList = new JList(userNames.toArray());
@@ -89,7 +99,10 @@ public class ChatPanel extends javax.swing.JPanel {
     frame.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         System.out.println("Desconctando...");
-        // fazer a chamada para desconectar do servidor
+        // enviando mesnagem rmi avisando que o usuario desconectou
+        try {
+          chatClientHandle.sendMessage(new ChatMessage(chatInfo.getUsrNome(), new String(""), ChatMessage.USER_LEAVE));
+        } catch(Exception err) { err.printStackTrace(); }
       }
     });
     add(bottomPanel);

@@ -1,5 +1,7 @@
+import java.io.*;
+
 // wrapper class for transporting a message
-public class ChatMessage {
+public class ChatMessage implements Serializable {
 
   public static final int USER_LEAVE = 1;
   public static final int USER_ENTER = 2;
@@ -37,6 +39,14 @@ public class ChatMessage {
 
   public void setMessageType(int type) {
     messageType = type;
+  }
+
+  private void readObject(ObjectInputStream input) throws ClassNotFoundException, IOException {
+    input.defaultReadObject();
+  }
+
+  private void writeObject(ObjectOutputStream ouput) throws IOException {
+    ouput.defaultWriteObject();
   }
 
 }
